@@ -2,74 +2,115 @@
 
 namespace Controllers;
 
-use Exception;
 use Services\UserService;
-use \Firebase\JWT\JWT;
+use Models\User;
 
 class UserController extends Controller
 {
-    private $service;
-
-    // initialize services
-    function __construct()
-    {
-        $this->service = new UserService();
-    }
-
-    public function login() {
-
-        // read user data from request body
-        $postedUser = $this->createObjectFromPostedJson("Models\\User");
-
-        // get user from db
-        $user = $this->service->checkUsernamePassword($postedUser->username, $postedUser->password);
-
-        // if the method returned false, the username and/or password were incorrect
-        if(!$user) {
-            $this->respondWithError(401, "Invalid login");
-            return;
+    
+        private $userService;
+    
+        function __construct()
+        {
+            $this->userService = new UserService();
         }
+    
+        public function getAll()
+        {
+           /* $jwt = $this->checkForJwt();
+            if ($jwt == null) {
+                return;
+            } elseif ($jwt->user_type != 1) {
+                $this->respondWithError(401, "You are not allowed here, Admin only");
+                return;
+            }*/
+            $user = $this->userService->getAll();
+            $this->respond($user);
+        }
+        public function insertUser(){
+            $posteduser = $this->createObjectFromPostedJson("Models\\User");
+            $user = $this->userService->insertUser($posteduser);
+            $this->respond($user);
+        }
+        public function updateUser($id){
+            /*$jwt = $this->checkForJwt();
+            if (!$jwt) {
+                return;
+            }*/
+            try{
+                $user = $this->userService->getUserById($id);
+                if(!$user){
+                    $this->respondWithError(404, "User not found");
+                    return;
+                }
+                $posteduser = $this->createObjectFromPostedJson("Models\\User");
+                $user = $this->userService->updateUser($posteduser, $id);
+            }catch(Exception $e){
+                $this->respondWithError(500, "Something went wrong");
+            }
+            $this->respond($user);    
+        }
+        public function getUserById($id){
+            $user = $this->userService->getUserById($id);
+            $this->respond($user);
+        }
+        public function deleteUser($id){
+            $jwt = $this->checkForJwt();
+            if (!$jwt) {
+                return;
+            }
+            $user = $this->userService->getUserById($id);
+            if(!$user){
+                $this->respondWithError(404, "User not found");
+                return;
+            }
+            $user = $this->userService->deleteUser($id);
+            $this->respond($user);
+        }
+        public function checkLogin($email, $password){
+            $postedUser = $this->createObjectFromPostedJson("Models\\User");
+            $user = $this->userService->checkLogin($postedUser->email, $postedUser->password);
+            if(!$user){
+                $this->respondWithError(404, "SORRY, There is no User with this email and password");
+                return;
+            }
 
-        // generate jwt
-        $tokenResponse = $this->generateJwt($user);       
+            $tokenResponse = $this->generateJwt($user);
+            $this->respond($tokenResponse);
+        }
+        public function generateJwt($user){
+            $secret_key = "webdev2-roby";
 
-        $this->respond($tokenResponse);    
-    }
+            $issuer = "Jobster";
+            $issuedAt = time();
+            $notBefore = $issuedAt;
+            $expire = $notBefore + 1500;
 
-    public function generateJwt($user) {
-        $secret_key = "YOUR_SECRET_KEY";
+            $payload = array(
+                "iss" => $issuer,
+                "iat" => $issuedAt,
+                "nbf" => $notBefore,
+                "exp" => $expire,
+                "data" => array(
+                    "id" => $user->id,
+                    "email" => $user->email,
+                    "user_type" => $user->user_type
+                )
+            );
 
-        $issuer = "THE_ISSUER"; // this can be the domain/servername that issues the token
-        $audience = "THE_AUDIENCE"; // this can be the domain/servername that checks the token
+            $jwt = JWT::encode($payload, $secret_key, 'HS256');
 
-        $issuedAt = time(); // issued at
-        $notbefore = $issuedAt; //not valid before 
-        $expire = $issuedAt + 600; // expiration time is set at +600 seconds (10 minutes)
-
-        // JWT expiration times should be kept short (10-30 minutes)
-        // A refresh token system should be implemented if we want clients to stay logged in for longer periods
-
-        // note how these claims are 3 characters long to keep the JWT as small as possible
-        $payload = array(
-            "iss" => $issuer,
-            "aud" => $audience,
-            "iat" => $issuedAt,
-            "nbf" => $notbefore,
-            "exp" => $expire,
-            "data" => array(
-                "id" => $user->id,
-                "username" => $user->username,
-                "email" => $user->email
-        ));
-
-        $jwt = JWT::encode($payload, $secret_key, 'HS256');
-
-        return 
-            array(
+            return array(
                 "message" => "Successful login.",
                 "jwt" => $jwt,
-                "username" => $user->username,
+                "firstname" => $user->firstname,
+                "lastname" => $user->lastname,
+                "user_id" => $user->id,
+                "user_type" => $user->user_type,
                 "expireAt" => $expire
             );
-    }    
+        }
+
 }
+
+?>

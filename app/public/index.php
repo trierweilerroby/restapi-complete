@@ -13,22 +13,31 @@ $router = new \Bramus\Router\Router();
 
 $router->setNamespace('Controllers');
 
-// routes for the products endpoint
-$router->get('/products', 'ProductController@getAll');
-$router->get('/products/(\d+)', 'ProductController@getOne');
-$router->post('/products', 'ProductController@create');
-$router->put('/products/(\d+)', 'ProductController@update');
-$router->delete('/products/(\d+)', 'ProductController@delete');
+// Define routes
 
-// routes for the categories endpoint
-$router->get('/categories', 'CategoryController@getAll');
-$router->get('/categories/(\d+)', 'CategoryController@getOne');
-$router->post('/categories', 'CategoryController@create');
-$router->put('/categories/(\d+)', 'CategoryController@update');
-$router->delete('/categories/(\d+)', 'CategoryController@delete');
+$router->get('/articles', 'ArticleController@getAll');//get all articles
+$router->post('/articles/insert', 'ArticleController@insertArticle');//insert article
+$router->delete('/articles/delete/(\d+)', 'ArticleController@deleteArticle');
+
+
+$router->get('/jobtypes', 'JobTypeController@getAll');//get all jobtypes
+$router->post('/jobtypes/insert', 'JobTypeController@insertJobType');//insert jobtype
+
+$router->get('/usertypes', 'UserTypeController@getAll');//get all usertypes
+
+$router->get('/replys', 'ReplyController@getAll');//get all replys
+$router->post('/replys/insert', 'ReplyController@insertReply');//insert reply
+$router->put('/replys/accept/(\d+)', 'ReplyController@acceptReply');//accept reply
+$router->delete('/replys/delete/(\d+)', 'ReplyController@deleteReply');
+
 
 // routes for the users endpoint
-$router->post('/users/login', 'UserController@login');
+$router->get('/users/login', 'UserController@login');
+$router->get('/users', 'UserController@getAll');//get all users
+$router->post('/users/register', 'UserController@insertUser');//register user
+$router->put('/users/update/(\d+)', 'UserController@updateUser');//update user
+$router->get('/users/CurrentUser/(\d+)', 'UserController@getUserById');//get user by id
+$router->delete('/users/delete/(\d+)', 'UserController@deleteUser');
 
 // Run it!
 $router->run();
