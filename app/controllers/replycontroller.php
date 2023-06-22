@@ -19,6 +19,11 @@ class ReplyController extends Controller
         $reply = $this->ReplyService->getAll();
         $this->respond($reply);
     }
+    public function getAllPending($reply_to)
+    {
+        $reply = $this->ReplyService->getAllPending($reply_to);
+        $this->respond($reply);
+    }
     public function insertReply(){
         $reply = $this->createObjectFromPostedJson("Models\Reply");
         $reply = $this->ReplyService->insertReply($reply);
@@ -30,8 +35,7 @@ class ReplyController extends Controller
         $this->respond($reply);
     }
     public function deleteReply($id){
-        $reply = $this->createObjectFromPostedJson("Models\Reply");
-        $reply = $this->ReplyService->deleteReply($reply, $id);
+        $reply = $this->ReplyService->deleteReply($id);
         $this->respond($reply);
     }
 }

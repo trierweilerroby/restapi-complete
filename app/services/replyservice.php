@@ -9,6 +9,10 @@ class ReplyService {
         $repository = new ReplyRepository();
         return $repository->getAll();
     }
+    public function getAllPending($reply_to) {
+        $repository = new ReplyRepository();
+        return $repository->getAllPending($reply_to);
+    }
     public function insertReply($reply) {
         $repository = new ReplyRepository();
         return $repository->insertReply($reply);
@@ -17,8 +21,8 @@ class ReplyService {
         $repository = new ReplyRepository();
         return $repository->acceptReply($reply, $id);
     }
-    public function deleteReply($reply,$id) {
+    public function deleteReply($id) {
         $repository = new ReplyRepository();
-        return $repository->deleteReply($reply, $id);
+        return $repository->deleteReply($id);
     }
 }

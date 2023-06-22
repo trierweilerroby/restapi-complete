@@ -16,6 +16,7 @@ $router->setNamespace('Controllers');
 // Define routes
 
 $router->get('/articles', 'ArticleController@getAll');//get all articles
+$router->get('/articles/(\d+)', 'ArticleController@getArticleById');//get article by id
 $router->post('/articles/insert', 'ArticleController@insertArticle');//insert article
 $router->delete('/articles/delete/(\d+)', 'ArticleController@deleteArticle');
 
@@ -25,14 +26,14 @@ $router->post('/jobtypes/insert', 'JobTypeController@insertJobType');//insert jo
 
 $router->get('/usertypes', 'UserTypeController@getAll');//get all usertypes
 
-$router->get('/replys', 'ReplyController@getAll');//get all replys
+$router->get('/replys/(\d+)', 'ReplyController@getAllPending');//get all replys
 $router->post('/replys/insert', 'ReplyController@insertReply');//insert reply
 $router->put('/replys/accept/(\d+)', 'ReplyController@acceptReply');//accept reply
-$router->delete('/replys/delete/(\d+)', 'ReplyController@deleteReply');
+$router->delete('/replys/delete/(\d+)', 'ReplyController@deleteReply');//delete reply
 
 
 // routes for the users endpoint
-$router->get('/users/login', 'UserController@login');
+$router->post('/users/login', 'UserController@checkLogin');//login user
 $router->get('/users', 'UserController@getAll');//get all users
 $router->post('/users/register', 'UserController@insertUser');//register user
 $router->put('/users/update/(\d+)', 'UserController@updateUser');//update user

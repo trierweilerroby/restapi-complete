@@ -69,7 +69,8 @@ class UserRepository extends Repository{
     }
     public function deleteUser($id){
         try{
-            $sql = "DELETE FROM `user` WHERE id = :id";
+            $sql = "DELETE FROM `user` WHERE id = :id;
+            DELETE FROM `article` WHERE author = :id;";
             $stmt = $this->connection->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
@@ -82,15 +83,13 @@ class UserRepository extends Repository{
     }
     public function checkLogin($email, $password){
         try{
-            $sql = "Select user.*, usertype.name as type_name from user inner join usertype on user.type_id = user_type.id where email = :email";
+            $sql = "SELECT * FROM `user` WHERE email = :email";
             $stmt = $this->connection->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
     
             $stmt->setFetchMode(PDO::FETCH_CLASS, 'Models\User');
             $user = $stmt->fetch();
-    
-            $user->password = $user['password'];
     
             if($user){
                 if($this->verifyPassword($password, $user->password)){

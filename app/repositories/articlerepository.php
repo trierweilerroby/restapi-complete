@@ -16,12 +16,11 @@ class ArticleRepository extends Repository {
         $article->author = $row['author'];
         $article->posted_at = $row['posted_at'];
         $article->salary = $row['salary'];
-        $article->author_firstname = $row['author_firstname'];
-        $article->author_lastname = $row['author_lastname'];
+    
         
         $userRep = new UserRepository();
         $user = $userRep->getUserById($row['author']);
-        $article->user = $user;
+        $article->author_user = $user;
 
         return $article;
     }
@@ -40,6 +39,21 @@ class ArticleRepository extends Repository {
 
         } catch (PDOException $e)
         {
+            echo $e;
+        }
+    }
+
+    public function getById($id) {
+        try {
+            $sql = "SELECT * FROM `article` WHERE id = :id";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $article = $this->rowArticle($row);
+            return $article;
+
+        } catch (PDOException $e) {
             echo $e;
         }
     }

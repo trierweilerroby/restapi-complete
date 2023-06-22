@@ -17,4 +17,8 @@ class ArticleService {
         $repository = new ArticleRepository();
         return $repository->deleteArticle($id);
     }
+    public function getArticleById($id) {
+        $repository = new ArticleRepository();
+        return $repository->getById($id);
+    }
 }

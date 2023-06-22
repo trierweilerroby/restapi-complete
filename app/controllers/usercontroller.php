@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Services\UserService;
 use Models\User;
+use Firebase\JWT\JWT;
 
 class UserController extends Controller
 {
@@ -55,10 +56,6 @@ class UserController extends Controller
             $this->respond($user);
         }
         public function deleteUser($id){
-            $jwt = $this->checkForJwt();
-            if (!$jwt) {
-                return;
-            }
             $user = $this->userService->getUserById($id);
             if(!$user){
                 $this->respondWithError(404, "User not found");
@@ -67,7 +64,7 @@ class UserController extends Controller
             $user = $this->userService->deleteUser($id);
             $this->respond($user);
         }
-        public function checkLogin($email, $password){
+        public function checkLogin(){
             $postedUser = $this->createObjectFromPostedJson("Models\\User");
             $user = $this->userService->checkLogin($postedUser->email, $postedUser->password);
             if(!$user){
@@ -94,7 +91,7 @@ class UserController extends Controller
                 "data" => array(
                     "id" => $user->id,
                     "email" => $user->email,
-                    "user_type" => $user->user_type
+                    "type_id" => $user->type_id
                 )
             );
 
@@ -106,7 +103,7 @@ class UserController extends Controller
                 "firstname" => $user->firstname,
                 "lastname" => $user->lastname,
                 "user_id" => $user->id,
-                "user_type" => $user->user_type,
+                "type_id" => $user->type_id,
                 "expireAt" => $expire
             );
         }
