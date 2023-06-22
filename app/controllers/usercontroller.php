@@ -33,24 +33,17 @@ class UserController extends Controller
             $user = $this->userService->insertUser($posteduser);
             $this->respond($user);
         }
-        public function updateUser($id){
-            /*$jwt = $this->checkForJwt();
-            if (!$jwt) {
+
+        public function promoteUser($id){
+            $user = $this->userService->getUserById($id);
+            if(!$user){
+                $this->respondWithError(404, "User not found");
                 return;
-            }*/
-            try{
-                $user = $this->userService->getUserById($id);
-                if(!$user){
-                    $this->respondWithError(404, "User not found");
-                    return;
-                }
-                $posteduser = $this->createObjectFromPostedJson("Models\\User");
-                $user = $this->userService->updateUser($posteduser, $id);
-            }catch(Exception $e){
-                $this->respondWithError(500, "Something went wrong");
             }
-            $this->respond($user);    
+            $user = $this->userService->promoteUser($id);
+            $this->respond($user);
         }
+
         public function getUserById($id){
             $user = $this->userService->getUserById($id);
             $this->respond($user);

@@ -35,21 +35,18 @@ class UserRepository extends Repository{
         }
     }
 
-    public function updateUser($user, $id){
+    public function promoteUser($id){
         try{
-            $sql = "UPDATE `user` SET `firstname`=:firstname,`lastname`=:lastname,`email`=:email,`type_id`=:type_id,`password`=:password,`certificate`=:certificate,`job_type`=:job_type WHERE id = :id";
+            $sql = "UPDATE `user` SET `type_id`= 1 WHERE id = :id";
             $stmt = $this->connection->prepare($sql);
-            $stmt->bindParam(':firstname', $user->firstname);
-            $stmt->bindParam(':lastname', $user->lastname);
-            $stmt->bindParam(':email', $user->email);
-            $stmt->bindParam(':type_id', $user->type_id);
-            $hashedPassword = $this->hashPassword($user->password);
-            $stmt->bindParam(':password', $hashedPassword);
-            $stmt->bindParam(':certificate', $user->certificate);
-            $stmt->bindParam(':job_type', $user->job_type);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
-            return $user;
+            return $id;
+    
+        }
+        catch(PDOException $e){
+            echo $e;
+
     
         }
         catch(PDOException $e){

@@ -13,9 +13,9 @@ class UserService {
         $repository = new UserRepository();
         return $repository->insertUser($user);
     }
-    public function updateUser($user, $id) {
+    public function promoteUser($id) {
         $repository = new UserRepository();
-        return $repository->updateUser($user ,$id);
+        return $repository->promoteUser($id);
     }
     public function getUserById($id) {
         $repository = new UserRepository();

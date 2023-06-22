@@ -43,6 +43,25 @@ class ArticleRepository extends Repository {
         }
     }
 
+    function getAllByAuthor($author) {
+        try {
+            $sql = "SELECT a.*, u.firstname as author_firstname, u.lastname as author_lastname FROM article as a join user as u on a.author = u.id WHERE author = :author";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bindParam(':author', $author);
+            $stmt->execute();
+            $articles = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $articles[] = $this->rowArticle($row);
+            }
+
+            return $articles;
+
+        } catch (PDOException $e)
+        {
+            echo $e;
+        }
+    }
+
     public function getById($id) {
         try {
             $sql = "SELECT * FROM `article` WHERE id = :id";
@@ -66,6 +85,23 @@ class ArticleRepository extends Repository {
             $stmt->bindParam(':content', $article->content);
             $stmt->bindParam(':author', $article->author);
             $stmt->bindParam(':salary', $article->salary);
+            $stmt->execute();
+            return $article;
+
+        } catch (PDOException $e) {
+            echo $e;
+        }
+    }
+
+    public function updateArticle($article, $id){
+        try {
+            $sql = "UPDATE `article` SET `title`=:title,`content`=:content,`author`=:author,`posted_at`=now(),`salary`=:salary WHERE id = :id";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bindParam(':title', $article->title);
+            $stmt->bindParam(':content', $article->content);
+            $stmt->bindParam(':author', $article->author);
+            $stmt->bindParam(':salary', $article->salary);
+            $stmt->bindParam(':id', $id);
             $stmt->execute();
             return $article;
 

@@ -16,9 +16,12 @@ $router->setNamespace('Controllers');
 // Define routes
 
 $router->get('/articles', 'ArticleController@getAll');//get all articles
+$router->get('/articles/author/(\d+)', 'ArticleController@getAllByAuthor');//get all articles by author
 $router->get('/articles/(\d+)', 'ArticleController@getArticleById');//get article by id
 $router->post('/articles/insert', 'ArticleController@insertArticle');//insert article
 $router->delete('/articles/delete/(\d+)', 'ArticleController@deleteArticle');
+$router->put('/articles/update/(\d+)', 'ArticleController@updateArticle');
+
 
 
 $router->get('/jobtypes', 'JobTypeController@getAll');//get all jobtypes
@@ -36,9 +39,9 @@ $router->delete('/replys/delete/(\d+)', 'ReplyController@deleteReply');//delete 
 $router->post('/users/login', 'UserController@checkLogin');//login user
 $router->get('/users', 'UserController@getAll');//get all users
 $router->post('/users/register', 'UserController@insertUser');//register user
-$router->put('/users/update/(\d+)', 'UserController@updateUser');//update user
 $router->get('/users/CurrentUser/(\d+)', 'UserController@getUserById');//get user by id
 $router->delete('/users/delete/(\d+)', 'UserController@deleteUser');
+$router->put('/users/promote/(\d+)', 'UserController@promoteUser');
 
 // Run it!
 $router->run();
